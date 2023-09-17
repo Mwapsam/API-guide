@@ -1,291 +1,441 @@
-<a name="readme-top"></a>
+# Smart Saver Zambia API
 
-<!--
-!!! IMPORTANT !!!
-This README is an example of how you could professionally present your codebase. 
-Writing documentation is a crucial part of your work as a professional software developer and cannot be ignored. 
 
-You should modify this file to match your project and remove sections that don't apply.
+# API Documentation For The Corporate App
 
-REQUIRED SECTIONS:
-- Table of Contents
-- About the Project
-  - Built With
-  - Live Demo
-- Getting Started
-- Authors
-- Future Features
-- Contributing
-- Show your support
-- Acknowledgements
-- License
+### Customer Login API
 
-OPTIONAL SECTIONS:
-- FAQ
+Endpoint: 
 
-After you're finished please remove all the comments and instructions!
+    /api/customer/login/
 
-For more information on the importance of a professional README for your repositories: https://github.com/microverseinc/curriculum-transversal-skills/blob/main/documentation/articles/readme_best_practices.md
--->
+- ***Method: POST***
+- ***Permissions: AllowAny***
 
-<div align="center">
-  <!-- You are encouraged to replace this logo with your own! Otherwise you can also remove it. -->
-  <img src="murple_logo.png" alt="logo" width="140"  height="auto" />
-  <br/>
+This API allows customers to log in to their accounts. It requires the following parameters in the request body:
 
-  <h3><b>Microverse README Template</b></h3>
+- email: The email address of the customer.
+- password: The password for the customer's account.
+- corporate_id: The ID of the associated corporate.
 
-</div>
+**Request:**
 
-<!-- TABLE OF CONTENTS -->
+        {
+          "email": "customer@example.com",
+          "password": "password123",
+          "corporate_id": 123
+        }
 
-# 📗 Table of Contents
+**Response:**
 
-- [📖 About the Project](#about-project)
-  - [🛠 Built With](#built-with)
-    - [Tech Stack](#tech-stack)
-    - [Key Features](#key-features)
-  - [🚀 Live Demo](#live-demo)
-- [💻 Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Setup](#setup)
-  - [Install](#install)
-  - [Usage](#usage)
-  - [Run tests](#run-tests)
-  - [Deployment](#deployment)
-- [👥 Authors](#authors)
-- [🔭 Future Features](#future-features)
-- [🤝 Contributing](#contributing)
-- [⭐️ Show your support](#support)
-- [🙏 Acknowledgements](#acknowledgements)
-- [❓ FAQ (OPTIONAL)](#faq)
-- [📝 License](#license)
+- Status: 200 OK
+- Body:
 
-<!-- PROJECT DESCRIPTION -->
+        {
+          "message": "Login successful.",
+          "customer": {
+            "id": 1,
+            "name": "John Doe",
+            "email": "customer@example.com",
+            "corporates": [123],
+            ...
+          },
+          "token": "ABCDEF123456"
+        }
 
-# 📖 [your_project_name] <a name="about-project"></a>
 
-> Describe your project in 1 or 2 sentences.
+- Status: 400 Bad Request
+- Body:
 
-**[your_project__name]** is a...
+        {
+          "message": "Invalid corporate."
+        }
 
-## 🛠 Built With <a name="built-with"></a>
+- Status: 401 Unauthorized
+- Body:
 
-### Tech Stack <a name="tech-stack"></a>
+        {
+          "message": "Invalid email or password."
+        }
 
-> Describe the tech stack and include only the relevant sections that apply to your project.
 
-<details>
-  <summary>Client</summary>
-  <ul>
-    <li><a href="https://reactjs.org/">React.js</a></li>
-  </ul>
-</details>
+## Corporate User Login API
 
-<details>
-  <summary>Server</summary>
-  <ul>
-    <li><a href="https://expressjs.com/">Express.js</a></li>
-  </ul>
-</details>
+Endpoint: 
 
-<details>
-<summary>Database</summary>
-  <ul>
-    <li><a href="https://www.postgresql.org/">PostgreSQL</a></li>
-  </ul>
-</details>
+          /api/corporate-user/login/
 
-<!-- Features -->
+- ***Method: POST***
+- ***Permissions: AllowAny***
 
-### Key Features <a name="key-features"></a>
+This API allows corporate users to log in to their accounts. It requires the following parameters in the request body:
 
-> Describe between 1-3 key features of the application.
+- email: The email address of the corporate user.
+- password: The password for the corporate user's account.
 
-- **[key_feature_1]**
-- **[key_feature_2]**
-- **[key_feature_3]**
+**Request:**
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+            {
+              "email": "user@example.com",
+              "password": "password123"
+            }
 
-<!-- LIVE DEMO -->
+**Response:**
 
-## 🚀 Live Demo <a name="live-demo"></a>
+- Status: 200 OK
+- Body:
 
-> Add a link to your deployed project.
+        {
+          "detail": "Login successful",
+          "token": "ABCDEF123456"
+        }
 
-- [Live Demo Link](https://google.com)
+- Status: 404 Not Found
+- Body:
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+        {
+          "detail": "No CorporateUser found"
+        }
 
-<!-- GETTING STARTED -->
+## Corporate User Logout API
+**Endpoint:** 
 
-## 💻 Getting Started <a name="getting-started"></a>
+      /api/corporate-user/logout/
 
-> Describe how a new developer could make use of your project.
+- ***Method: POST***
 
-To get a local copy up and running, follow these steps.
+This API allows corporate users to log out from their accounts. It requires authentication with a valid token.
 
-### Prerequisites
+**Request:**
+- No request body is required.
 
-In order to run this project you need:
+**Response:**
+- Status: 200 OK
+- Body:
 
-<!--
-Example command:
+        {
+          "detail": "Logout successful"
+        }
 
-```sh
- gem install rails
+## Corporate User Create API
+**Endpoint:** 
+
+    /api/corporate-user/create/
+
+- ***Method: POST***
+
+This API allows creating a new corporate user. It requires authentication as a staff user.
+
+**Request:**
+
+        {
+          "email": "user@example.com",
+          "password": "password123",
+          ...
+        }
+
+***Note: The exact fields required may vary based on your implementation.***
+
+**Response:**
+
+- Status: 201 Created
+- Body:
+
+        {
+          "detail": "Corporate user created successfully",
+          "corporate_user": {
+            "id": 1,
+            "email": "user@example.com",
+            ...
+          }
+        }
+
+- Status: 401 Unauthorized
+- Body:
+
+      {
+        "detail": "Unauthorized"
+      }
+- Status: 400 Bad Request
+- Body:
+
+      {
+        "field_name": [
+          "Error message 1",
+          "Error message 2"
+        ],
+        ...
+      }
+
+## Corporate Create API
+**Endpoint:** 
+
+      /api/corporate/create/
+
+- ***Method: POST***
+
+This API allows creating a new corporate.
+
+**Request:**
+
+      {
+        "name": "ABC Corporation",
+        "address": "123 Main Street",
+        "phone": "0965234432",
+        "email": "newcorporate@smartsaver.com",
+        "owner": 17
+      }
+
+**Response:**
+- Status: 201 Created
+- Body:
+
+      {
+        "message": "Corporate created successfully",
+        "corporate": {
+          "id": 1,
+          "name": "ABC Corporation",
+          ...
+        }
+      }
+- Status: 400 Bad Request
+- Body:
+
+      {
+        "field_name": [
+          "Error message 1",
+          "Error message 2"
+        ],
+        ...
+      }
+
+## Customer Registration API
+**Endpoint:** 
+
+    /api/customer/register/
+
+***- Method: POST***
+
+This API allows registering a new customer. It does not require authentication.
+
+**Request:**
+
+    {
+      "email": "user@example.com",
+      "password": "password123",
+      "corporate_id": 1,
+      "first_name": "Sam",
+      "last_name": "Mwape"
+    }
+
+**Response**
+- Status: 201 Created
+- Body:
+
+      {
+        "message": "Customer registration successful."
+      }
+
+- Status: 400 Bad Request
+- Body:
+
+      {
+        "message": "Invalid corporate."
+      }
+
+## User CSV Upload API
+**Endpoint:** 
+
+    /api/bulk-customer-upload/
+
+- **Method: POST**
+
+This API allows uploading a CSV file containing user data and creating multiple users from it.
+
+Request
+The request should be a `multipart/form-data` request with the following parameters:
+
+- csv_file: The CSV file containing user data.
+- corporate_id: The ID of the corporate to associate the users with (The one uploading the file).
+
+**Response**
+- Status: 201 Created
+- Body:
+
+      {
+        "message": "Users created successfully.",
+        "users": [
+          {
+            "id": 1,
+            "username": "user1",
+            ...
+          },
+          {
+            "id": 2,
+            "username": "user2",
+            ...
+          },
+          ...
+        ]
+      }
+      
+- Status: 400 Bad Request
+- Body:
+
+      {
+        "field_name": [
+          "Error message 1",
+          "Error message 2"
+        ],
+        ...
+      }
+
+### Get Corporate Customers API
+
+**Endpoint:**
+
+      /api/corporate/{corporate_id}/customers/
+
+- ***Method: GET***
+
+This API allows retrieving the customers associated with a corporate.
+
+**Parameters:**
+- corporate_id (integer): The ID of the corporate.
+
+**Response**
+
+- Status: 200 OK
+- Body:
+
+      {
+        "customers": [
+          {
+            "id": 1,
+            "name": "John Doe",
+            "email": "john.doe@example.com",
+            ...
+          },
+          {
+            "id": 2,
+            "name": "Jane Smith",
+            "email": "jane.smith@example.com",
+            ...
+          },
+          ...
+        ]
+      }
+
+### Delete Customer API
+**Endpoint:**
+
+    /api/customer/{customer_id}/delete/
+
+- ***Method: DELETE***
+
+This API allows deleting a customer.
+
+**Parameters:**
+
+- customer_id (integer): The ID of the customer to be deleted.
+
+**Response**
+- Status: 204 No Content
+
+## **APP API IN REST**
+
+1. **Register User API**
+
+   Endpoint: `POST /api/register/`
+
+   Request Body:
+   ```
+   {
+     "first_name": "John",
+     "last_name": "Doe",
+     "notification_id": "some_notification_id",
+     "email": "john.doe@example.com",
+     "password": "password123"
+   }
+   ```
+
+   Description: This API allows a user to register a new account. It creates a new user with the provided details and sends a verification email.
+
+2. **Login User API**
+
+   Endpoint: `POST /api/login/`
+
+   Request Body:
+   ```
+   {
+     "username": "john.doe@example.com",
+     "password": "password123",
+     "device_id": "some_device_id"
+   }
+   ```
+
+   Description: This API allows a user to authenticate and obtain an access token. It verifies the user's credentials and returns an access token for subsequent API requests.
+
+3. **Forgot Password API**
+
+   Endpoint: `POST /api/forgot-password/`
+
+   Request Body:
+   ```
+   {
+     "email": "john.doe@example.com"
+   }
+   ```
+
+   Description: This API initiates the password recovery process for a user. It sends a password reset link to the user's email address.
+
+4. **Create Support Ticket API**
+
+   Endpoint: `POST /api/support-tickets/`
+
+   Request Body:
+   ```
+   {
+     "phone_number": "1234567890",
+     "message": "I need help with..."
+   }
+   ```
+
+   Description: This API allows an authenticated user to create a support ticket. It associates the ticket with the user's customer account and stores the provided phone number and message.
+
+5. **Upload Image API**
+
+   Endpoint: `PUT /api/upload-image/`
+
+   Request Body:
+   ```
+   {
+     "image": <image_file>
+   }
+   ```
+
+   Description: This API allows an authenticated user to upload an image. It updates the user's customer account with the uploaded image.
+
+6. **Invite Member API**
+
+   Endpoint: `POST /api/invite-member/`
+
+   Request Body:
+   ```
+   {
+     "email": "member@example.com"
+   }
+   ```
+
+   Description: This API allows an authenticated user to invite a member to their account. It sends an invitation email to the provided email address.
+
+Note: For all the APIs, make sure to include the access token in the request headers:
 ```
- -->
-
-### Setup
-
-Clone this repository to your desired folder:
-
-<!--
-Example commands:
-
-```sh
-  cd my-folder
-  git clone git@github.com:myaccount/my-project.git
+Authorization: Bearer <access_token>
 ```
---->
 
-### Install
+```docker-compose -f docker-compose.dev.yml exec db psql -d smartsaver_db -U smartsaver -W```
 
-Install this project with:
+```ALTER TABLE erp_customer ALTER COLUMN segment DROP NOT NULL;```
 
-<!--
-Example command:
-
-```sh
-  cd my-project
-  gem install
-```
---->
-
-### Usage
-
-To run the project, execute the following command:
-
-<!--
-Example command:
-
-```sh
-  rails server
-```
---->
-
-### Run tests
-
-To run tests, run the following command:
-
-<!--
-Example command:
-
-```sh
-  bin/rails test test/models/article_test.rb
-```
---->
-
-### Deployment
-
-You can deploy this project using:
-
-<!--
-Example:
-
-```sh
-
-```
- -->
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- AUTHORS -->
-
-## 👥 Authors <a name="authors"></a>
-
-> Mention all of the collaborators of this project.
-
-👤 **Author1**
-
-- GitHub: [@githubhandle](https://github.com/githubhandle)
-- Twitter: [@twitterhandle](https://twitter.com/twitterhandle)
-- LinkedIn: [LinkedIn](https://linkedin.com/in/linkedinhandle)
-
-👤 **Author2**
-
-- GitHub: [@githubhandle](https://github.com/githubhandle)
-- Twitter: [@twitterhandle](https://twitter.com/twitterhandle)
-- LinkedIn: [LinkedIn](https://linkedin.com/in/linkedinhandle)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- FUTURE FEATURES -->
-
-## 🔭 Future Features <a name="future-features"></a>
-
-> Describe 1 - 3 features you will add to the project.
-
-- [ ] **[new_feature_1]**
-- [ ] **[new_feature_2]**
-- [ ] **[new_feature_3]**
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- CONTRIBUTING -->
-
-## 🤝 Contributing <a name="contributing"></a>
-
-Contributions, issues, and feature requests are welcome!
-
-Feel free to check the [issues page](../../issues/).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- SUPPORT -->
-
-## ⭐️ Show your support <a name="support"></a>
-
-> Write a message to encourage readers to support your project
-
-If you like this project...
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- ACKNOWLEDGEMENTS -->
-
-## 🙏 Acknowledgments <a name="acknowledgements"></a>
-
-> Give credit to everyone who inspired your codebase.
-
-I would like to thank...
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- FAQ (optional) -->
-
-## ❓ FAQ (OPTIONAL) <a name="faq"></a>
-
-> Add at least 2 questions new developers would ask when they decide to use your project.
-
-- **[Question_1]**
-
-  - [Answer_1]
-
-- **[Question_2]**
-
-  - [Answer_2]
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- LICENSE -->
-
-## 📝 License <a name="license"></a>
-
-This project is [MIT](./LICENSE) licensed.
-
-_NOTE: we recommend using the [MIT license](https://choosealicense.com/licenses/mit/) - you can set it up quickly by [using templates available on GitHub](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/adding-a-license-to-a-repository). You can also use [any other license](https://choosealicense.com/licenses/) if you wish._
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+```ALTER TABLE erp_customer DROP COLUMN segment_id;```
