@@ -646,7 +646,7 @@ This API allows deleting a customer.
     - Status: 400 Bad Request
     - In case of errors, the response will contain an error message. Handle errors gracefully and provide appropriate error messages and status codes as needed.
 
-16. **Create Payment Token 2 API**
+15. **Create Payment Token 2 API**
 
     Endpoint: `/api/payment/token2/create/`
     - Method: POST
@@ -679,7 +679,7 @@ This API allows deleting a customer.
     - Status: 400 Bad Request
     - In case of errors, the response will contain an error message.
 
-18. **Verify Payment Token API**
+16. **Verify Payment Token API**
 
     Endpoint: `/api/payment/token/verify/`
     - Method: POST
@@ -706,7 +706,7 @@ This API allows deleting a customer.
     - In case of errors, the response will contain an error message.
 
 
-20. **Create CGrate Payment API**
+17. **Create CGrate Payment API**
 
      Endpoint: `/api/payment/cgrate/create/`
     - Method: POST
@@ -740,6 +740,48 @@ This API allows deleting a customer.
     *Error Response*
     - Status: 400 Bad Request
     - In case of errors, the response will contain an error message.
+
+18. **Get Customer Corporates API**
+
+    Endpoint: `/api/customer/corporates/`
+
+    Method: GET
+    - Permissions: AllowAny
+    - This API allows retrieving a list of corporates associated with a customer's email address.
+    
+    ***Request***
+       The request should include the email address of the customer as a query parameter.
+
+    ```
+        /api/customer/corporates/?email=customer@example.com
+    ```
+
+    - email: The email address of the customer for whom corporates should be retrieved.
+      
+    ***Response***
+    *Success Response*
+    - Status: 200 OK
+    - Body: List of corporate objects serialized using `CorporateSerializer`.
+
+      ```
+          [
+              {
+                "id": 1,
+                "name": "Example Corporate 1",
+                // Additional corporate information
+              },
+              {
+                "id": 2,
+                "name": "Example Corporate 2",
+                // Additional corporate information
+              },
+              // ... more corporate objects
+            ]
+      ```
+
+      *Error Response*
+       - Status: 404 Not Found
+       - In case the user or customer does not exist, the response will contain an error message.
 
 
 
