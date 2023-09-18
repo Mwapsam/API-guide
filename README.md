@@ -429,13 +429,318 @@ This API allows deleting a customer.
 
    Description: This API allows an authenticated user to invite a member to their account. It sends an invitation email to the provided email address.
 
-Note: For all the APIs, make sure to include the access token in the request headers:
-```
-Authorization: Bearer <access_token>
-```
+7. **Corporate List API**
 
-```docker-compose -f docker-compose.dev.yml exec db psql -d smartsaver_db -U smartsaver -W```
+   Endpoint: `/api/corporate/list/`
+   - Method: GET
+   - Permissions: IsAdmin
 
-```ALTER TABLE erp_customer ALTER COLUMN segment DROP NOT NULL;```
+     Description: This API allows administrators to retrieve a list of all corporates. It requires JWT authentication for access.
 
-```ALTER TABLE erp_customer DROP COLUMN segment_id;```
+     *Response*
+     ## Success Response
+
+     - Status: 200 OK
+     - Body: List of corporate objects serialized using `CorporateSerializer`.
+
+       ```[
+          {
+            "id": 1,
+            "name": "Example Corporate 1",
+            // Additional corporate information
+          },
+          {
+            "id": 2,
+            "name": "Example Corporate 2",
+            // Additional corporate information
+          },
+          // ... more corporate objects
+        ]
+        ```
+
+8. **Corporate Users List API**
+       
+     Endpoint: `/api/corporate/users/list/`
+
+   - Method: GET
+   - Permissions: IsAdmin
+
+     Description: This API allows administrators to retrieve a list of all corporate users. It requires JWT authentication for access.
+
+     ## Response
+     *Success Response*
+     - Status: 200 OK
+     - Body: List of corporate user objects serialized using CorpUserSerializer.
+
+       ```
+               [
+                  {
+                    "id": 1,
+                    "username": "user1",
+                    "email": "user1@example.com",
+                    // Additional corporate user information
+                  },
+                  {
+                    "id": 2,
+                    "username": "user2",
+                    "email": "user2@example.com",
+                    // Additional corporate user information
+                  },
+                  // ... more corporate user objects
+                ]
+       ```
+       *Error Response*
+       - Status: 401 Unauthorized (if authentication fails)
+       - Status: 403 Forbidden (if the user is not an admin)
+
+ 9. **Create Payment Page Token API**
+
+    Endpoint: `/api/payment/token/create/`
+    
+    - Method: POST
+      This API allows users to create a payment page token for a specified tier.
+
+    ***Request***
+    ```
+        {
+          "tier_id": 1
+        }
+    ```
+    tier_id: The ID of the tier for which the payment page token should be created.
+    
+    ***Response***
+    *Success Response*
+    - Status: 200 OK
+    - Body:
+      ```
+          {
+              "transactionToken": "ABCDEF123456"
+          }
+      ```
+
+    transactionToken: The token for the payment page.
+    
+    ***Error Response***
+    - Status: 400 Bad Request
+    - In case of errors, the response will contain an error message.
+    
+    Note: This API interacts with a payment gateway to create a payment page token. It's essential to handle errors gracefully and provide appropriate error messages and status codes as needed.
+
+ 10. **Create Add Card Token API**
+
+     Endpoint: `/api/payment/card/token/create/`
+
+     Method: POST
+     This API allows users to create a payment page token for adding a card.
+    
+     ***Request***
+        The request does not require any additional parameters. The user making the request is automatically associated with their account.
+
+     ***Response***
+     *Success Response*
+     - Status: 200 OK
+     - Body:
+       ```
+           {
+              "transactionToken": "ABCDEF123456"
+            }
+       ```
+
+       transactionToken: The token for adding a card.
+       ***Error Response***
+        - Status: 400 Bad Request
+        - In case of errors, the response will contain an error message.
+ 
+        Note: These payment-related APIs interact with a payment gateway to create tokens. Handle errors gracefully and provide appropriate error messages and status codes as needed.
+       
+11. **Send OTP API**
+
+    Endpoint: `/api/send-otp/`
+
+    Method: POST
+    Permissions: AllowAny
+    This API allows sending a One-Time Password (OTP) to a specified mobile number.
+
+    ***Request***
+    ```
+        {
+          "mobile_number": "1234567890",
+          "dial_code": "+1"
+        }
+    ```
+    - mobile_number: The mobile number to which the OTP should be sent.
+    - dial_code: The dial code or country code for the mobile number.
+      
+    ***Response***
+    *Success Response*
+    - Status: 200 OK
+    - Body:
+    ```
+        {
+          "success": true
+        }
+    ```
+    - success: Indicates whether the OTP was successfully sent.
+    *Error Response*
+    - Status: 400 Bad Request
+    Note: In case of errors, the response will contain an error message. The API sends an OTP to the provided mobile number and stores it in the database for verification. Handle errors gracefully and provide appropriate error messages and status codes as needed.
+
+12. **Verify OTP API**
+
+    Endpoint: `/api/verify-otp/`
+    - Method: POST
+    - Permissions: IsAuthenticated
+      This API allows users to verify an OTP (One-Time Password) for authentication.
+
+    ***Request***
+    ```
+        {
+          "otp": "123456"
+        }
+    ```
+    - otp: The OTP to be verified.
+      
+    ***Response***
+    *Success Response*
+    - Status: 200 OK
+    - Body:
+      ```
+          {
+              "success": true
+          }
+      ```
+    - success: Indicates whether the OTP was successfully verified.
+    *Error Response*
+    - Status: 400 Bad Request
+    - In case of errors or incorrect OTP, the response will contain an error message.
+    
+    Note: Handle OTP verification errors gracefully and provide appropriate error messages and status codes as needed.
+
+14. **Update Mobile Number API**
+
+    Endpoint: `/api/update-mobile-number/`
+    
+    - Method: POST
+    - Permissions: IsAuthenticated
+      
+     This API allows users to update their mobile number and dial code.
+    ```
+        {
+          "mobile_number": "1234567890",
+          "dial_code": "+1"
+        }
+    ```
+    - mobile_number: The new mobile number to be updated.
+    - dial_code: The new dial code or country code to be updated.
+    ***Response***
+    *Success Response*
+    - Status: 200 OK
+    - Body:
+      ```
+          {
+              "mobile_number": "+11234567890"
+          }
+      ```
+    - mobile_number: The updated mobile number with the new dial code.
+    *Error Response*
+    - Status: 400 Bad Request
+    - In case of errors, the response will contain an error message. Handle errors gracefully and provide appropriate error messages and status codes as needed.
+
+16. **Create Payment Token 2 API**
+
+    Endpoint: `/api/payment/token2/create/`
+    - Method: POST
+    - Permissions: IsAuthenticated
+      This API allows users to create a payment token for a subscription with optional discount code.
+
+    ***Request***
+    ```
+        {
+          "data": {
+            "subscription_id": 1,
+            "discount_code": "DISCOUNT123"
+          }
+        }
+    ```
+    - data.subscription_id: The ID of the subscription for which the payment token should be created.
+    - data.discount_code: (Optional) Discount code to be applied.
+      
+    ***Response***
+    *Success Response*
+    - Status: 200 OK
+    - Body:
+      ```
+          {
+              "transactionToken": "ABCDEF123456"
+          }
+      ```
+    - transactionToken: The token for the payment.
+    *Error Response*
+    - Status: 400 Bad Request
+    - In case of errors, the response will contain an error message.
+
+18. **Verify Payment Token API**
+
+    Endpoint: `/api/payment/token/verify/`
+    - Method: POST
+    - Permissions: IsAuthenticated
+      This API allows users to verify a payment token.
+      ```
+          {
+              "token": "ABCDEF123456"
+          }
+      ```
+    - token: The payment token to be verified.
+    ***Response**
+    *Success Response*
+    - Status: 200 OK
+    - Body:
+      ```
+          {
+              "success": true
+          }
+      ```
+      - success: Indicates whether the payment token was successfully verified.
+    *Error Response*
+    - Status: 400 Bad Request
+    - In case of errors, the response will contain an error message.
+
+
+20. **Create CGrate Payment API**
+
+     Endpoint: `/api/payment/cgrate/create/`
+    - Method: POST
+    - Permissions: IsAuthenticated
+      This API allows users to process a mobile money payment with an optional discount code.
+
+    ***Request***
+    ```
+      {
+          "data": {
+            "subscription_id": 1,
+            "mobile_number": "1234567890",
+            "discount_code": "DISCOUNT123"
+          }
+        }
+    ```
+    - data.subscription_id: The ID of the subscription for which the payment should be processed.
+    - data.mobile_number: The mobile number for the payment.
+    - data.discount_code: (Optional) Discount code to be applied.
+      
+    ***Response***
+    *Success Response*
+    - Status: 200 OK
+    - Body:
+    ```
+        {
+          "success": true
+        }
+    ```
+    - success: Indicates whether the payment was successfully processed.
+    *Error Response*
+    - Status: 400 Bad Request
+    - In case of errors, the response will contain an error message.
+
+
+
+
